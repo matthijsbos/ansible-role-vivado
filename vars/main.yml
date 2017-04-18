@@ -1,0 +1,12 @@
+---
+# vars file for fpgaedu.vivado
+
+supported_vivado_versions:
+  - 2016.4
+  - 2016.3
+  - 2016.2
+  - 2016.1
+
+supported_vivado_editions:
+  - lab
+  - webpack

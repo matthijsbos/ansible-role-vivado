@@ -1,0 +1,19 @@
+---
+# tasks file for fpgaedu.vivado
+
+  - assert:
+        that: 
+            - vivado_edition in supported_vivado_editions
+            - vivado_version in supported_vivado_versions
+
+  - tempfile:
+        state: directory
+        prefix: vivado_install
+    register: vivado_installer_extract_dir
+
+  - unarchive:
+        src: "/tmp/vivado_installer.tar.gz"
+        dest: "{{ vivado_installer_extract_dir.path }}"
+        remote_src: True
+
+
