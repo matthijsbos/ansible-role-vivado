@@ -1,19 +1,58 @@
 ---
 # tasks file for fpgaedu.vivado
-
-  - assert:
-        that: 
-            - vivado_edition in supported_vivado_editions
-            - vivado_version in supported_vivado_versions
-
-  - tempfile:
-        state: directory
+#  - assert:
+#        that: 
+#            - vivado_edition in supported_vivado_editions
+#            - vivado_version in supported_vivado_versions
+- block:
+    - name: Create temporary directory for Vivado setup files
+      tempfile:
         prefix: vivado_install
-    register: vivado_installer_extract_dir
-
-  - unarchive:
-        src: "/tmp/vivado_installer.tar.gz"
-        dest: "{{ vivado_installer_extract_dir.path }}"
+        state: directory
+      changed_when: False
+      register: vivado_install_tmp_dir
+  
+    - name: Extract installer files
+      unarchive:
+        src: "{{ vivado_installer_archive_path }}"
+        dest: "{{ vivado_install_tmp_dir.path }}"
         remote_src: True
+      changed_when: False
+  
+    - name: Locate xsetup executable
+      find: 
+        paths:
+            - "{{ vivado_install_tmp_dir.path }}"
+        file_type: file
+        patterns: "xsetup"
+        recurse: True
+      register: vivado_find_xsetup
+      failed_when: vivado_find_xsetup.matched != 1
 
+    - name: Create Vivado installer configuration
+      copy:
+        src: "{{ role_path }}/files/vivado_{{ vivado_edition }}_install_config.txt"
+        dest: "{{ vivado_install_tmp_dir.path }}/vivado_install_config.txt"
+      changed_when: False
 
+    - name: Detect pre-existing installation in installation location
+      stat:
+        path: "{{ vivado_location }}/{{ 'Vivado_Lab' if vivado_edition == 'lab' else 'Vivado' }}/{{ vivado_version }}"
+      register: vivado_existing_setup
+
+    - name: Execute Vivado installer
+      command: >
+        {{ vivado_find_xsetup.files[0].path }}
+        --agree 3rdPartyEULA,WebTalkTerms,XilinxEULA
+        --batch Install
+        --config {{ vivado_install_tmp_dir.path }}/vivado_install_config.txt
+        --location {{ vivado_location }}
+      when: not vivado_existing_setup.stat.exists
+
+  always:
+    - name: Clean up temporary files used during installation
+      file:
+        path: "{{ vivado_install_tmp_dir.path }}"
+        state: absent
+      changed_when: False
+  
