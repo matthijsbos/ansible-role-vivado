@@ -5,21 +5,23 @@
       vivado_installer_archive_path: /tmp/installer.tar.gz
 
   pre_tasks:
-      # Install python and pip
-      - apt:
+
+      - name: Install python and pip
+        apt:
           name: "{{ item }}"
           state: present
         with_items:
             - python-minimal
             - python-pip
-      # Install aws-cli
-      - pip:
+
+      - name: Install aws-cli
+        pip:
           name: awscli
 
   roles:
       # Download installer archive from s3
     - role: matthijsbos.aws_s3
-      aws_s3_src: s3://vivado-install/Xilinx_Vivado_Lab_Lin_2016.4_0124_1.tar.gz  
+      aws_s3_src: s3://vivado-install/Xilinx_Vivado_Lab_Lin_2016.4_0124_1.tar.gz
       aws_s3_dest: "{{ vivado_installer_archive_path }}"
       aws_s3_endpoint_url: http://s3.fpgaedu.com
       aws_s3_region: us-east-1
