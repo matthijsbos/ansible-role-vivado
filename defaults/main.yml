@@ -1,10 +1,7 @@
 ---
 # defaults file for fpgaedu.vivado
-
 vivado_version: 2016.4
 vivado_edition: webpack
-installer_archive_path: ""
-headless: False
-destination: /opt/Xilinx
+vivado_headless: False
 
 
