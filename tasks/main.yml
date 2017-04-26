@@ -1,26 +1,30 @@
 ---
 # tasks file for fpgaedu.vivado
-#  - assert:
-#        that: 
-#            - vivado_edition in supported_vivado_editions
-#            - vivado_version in supported_vivado_versions
 - block:
+    - name: Detect pre-existing installation in installation location
+      stat:
+        path: "{{ vivado_location }}/{{ 'Vivado_Lab' if vivado_edition == 'lab' else 'Vivado' }}/{{ vivado_version }}"
+      register: vivado_existing_setup
+      when: not vivado_existing_setup.stat.exists
+
     - name: Create temporary directory for Vivado setup files
       tempfile:
         prefix: vivado_install
         state: directory
       changed_when: False
       register: vivado_install_tmp_dir
-  
+      when: not vivado_existing_setup.stat.exists
+
     - name: Extract installer files
       unarchive:
         src: "{{ vivado_installer_archive_path }}"
         dest: "{{ vivado_install_tmp_dir.path }}"
         remote_src: True
       changed_when: False
-  
+      when: not vivado_existing_setup.stat.exists
+
     - name: Locate xsetup executable
-      find: 
+      find:
         paths:
             - "{{ vivado_install_tmp_dir.path }}"
         file_type: file
@@ -28,17 +32,14 @@
         recurse: True
       register: vivado_find_xsetup
       failed_when: vivado_find_xsetup.matched != 1
+      when: not vivado_existing_setup.stat.exists
 
     - name: Create Vivado installer configuration
       copy:
         src: "{{ role_path }}/files/vivado_{{ vivado_edition }}_install_config.txt"
         dest: "{{ vivado_install_tmp_dir.path }}/vivado_install_config.txt"
       changed_when: False
-
-    - name: Detect pre-existing installation in installation location
-      stat:
-        path: "{{ vivado_location }}/{{ 'Vivado_Lab' if vivado_edition == 'lab' else 'Vivado' }}/{{ vivado_version }}"
-      register: vivado_existing_setup
+      when: not vivado_existing_setup.stat.exists
 
     - name: Execute Vivado installer
       command: >
@@ -55,4 +56,4 @@
         path: "{{ vivado_install_tmp_dir.path }}"
         state: absent
       changed_when: False
-  
+
