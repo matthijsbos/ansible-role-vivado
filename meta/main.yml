@@ -1,6 +1,6 @@
 galaxy_info:
   author: Matthijs Bos
-  description: Ansible role for installation of Xilinx Vivado 
+  description: Ansible role for installation of Xilinx Vivado
 
   issue_tracker_url: https://github.com/matthijsbos/ansible-role-vivado/issues
 

@@ -5,7 +5,6 @@
       stat:
         path: "{{ vivado_location }}/{{ 'Vivado_Lab' if vivado_edition == 'lab' else 'Vivado' }}/{{ vivado_version }}"
       register: vivado_existing_setup
-      when: not vivado_existing_setup.stat.exists
 
     - name: Create temporary directory for Vivado setup files
       tempfile:
@@ -56,4 +55,5 @@
         path: "{{ vivado_install_tmp_dir.path }}"
         state: absent
       changed_when: False
+      when: not vivado_existing_setup.stat.exists
 
