@@ -1,0 +1,37 @@
+---
+- hosts: all
+
+  vars:
+      vivado_installer_archive_path: /tmp/installer.tar.gz
+
+  pre_tasks:
+
+      - name: Install python and pip
+        apt:
+          name: "{{ item }}"
+          state: present
+        with_items:
+            - python-minimal
+            - python-pip
+
+      - name: Install aws-cli
+        pip:
+          name: awscli
+
+  roles:
+      # Download installer archive from s3
+    - role: matthijsbos.aws_s3
+      aws_s3_src: s3://vivado-install/Xilinx_Vivado_SDK_2017.1_0415_1.tar.gz
+      aws_s3_dest: "{{ vivado_installer_archive_path }}"
+      aws_s3_endpoint_url: http://s3.fpgaedu.com
+      aws_s3_region: us-east-1
+      # Get s3 keys from local env
+      aws_s3_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+      aws_s3_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+
+      # Install vivado, the installer archive's location is set above in the
+      # vivado_installer_archive_path var
+    - role: ansible-role-vivado
+      vivado_version: 2017.1
+      vivado_edition: webpack
+      vivado_location: /home/vagrant/Xilinx
