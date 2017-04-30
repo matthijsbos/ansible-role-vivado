@@ -1,9 +1,10 @@
 ---
 # tasks file for fpgaedu.vivado
 - block:
+
     - name: Detect pre-existing installation in installation location
       stat:
-        path: "{{ vivado_location }}/{{ 'Vivado_Lab' if vivado_edition == 'lab' else 'Vivado' }}/{{ vivado_version }}"
+        path: "{{ vivado_install_location }}"
       register: vivado_existing_setup
 
     - name: Create temporary directory for Vivado setup files
@@ -48,6 +49,30 @@
         --config {{ vivado_install_tmp_dir.path }}/vivado_install_config.txt
         --location {{ vivado_location }}
       when: not vivado_existing_setup.stat.exists
+
+    - name: Check if driver is already installed
+      stat:
+          path: /etc/udev/rules.d/52-xilinx-digilent-usb.rules
+      register: vivado_driver_usb_rules
+
+      # must change working directory or else driver install will fail.
+    - name: Install board drivers
+      become: true
+      shell: "sh {{ vivado_install_location }}/data/xicom/cable_drivers/lin64/install_script/install_drivers/install_drivers"
+      args:
+          chdir: "{{ vivado_install_location }}/data/xicom/cable_drivers/lin64/install_script/install_drivers/"
+      when:
+          - not vivado_driver_usb_rules.stat.exists
+
+
+      # In order to support headless vm's, as per 
+      # https://www.xilinx.com/support/answers/62553.html, a line in 
+      # base.tcl containing rdi:x11_workaround needs to be removed
+    - name: remove x11 workaround line in base.tcl
+      lineinfile: 
+          line: rdi::x11_workaround
+          path: "{{ vivado_install_location }}/lib/scripts/rdi/features/base/base.tcl"
+          state: "{{ 'absent' if vivado_headless else 'present' }}"
 
   always:
     - name: Clean up temporary files used during installation
