@@ -73,6 +73,18 @@
           line: rdi::x11_workaround
           path: "{{ vivado_install_location }}/lib/scripts/rdi/features/base/base.tcl"
           state: "{{ 'absent' if vivado_headless else 'present' }}"
+    
+    - name: add line to user .bashrc to source vivado settings
+      lineinfile: 
+        line: "source {{ vivado_install_location }}/settings64.sh"
+        path: "~/.bashrc"
+        state: "{{ 'present' if vivado_source_bashrc else 'absent' }}"
+
+    - name: ensure LC_ALL environment variable is properly setup
+      lineinfile:
+        line: "export LC_ALL=C.UTF-8"
+        path: "~/.bashrc"
+
 
   always:
     - name: Clean up temporary files used during installation
