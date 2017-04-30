@@ -35,3 +35,5 @@
       vivado_version: 2017.1
       vivado_edition: lab
       vivado_location: /home/vagrant/Xilinx
+      vivado_headless: true
+      vivado_source_bashrc: true
