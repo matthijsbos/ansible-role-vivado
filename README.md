@@ -8,10 +8,12 @@ Requirements
 The installer archive for the desired Vivado edition is to be present on the system. Lab editions have OS-specific installer archives. WebPack editions require the "All OS installer Single-File Download". Xilinx installer archives can't be automatically downloaded, since US export regulations require users to be registered and authenticated in order to access the [Xilinx website downloads section](https://www.xilinx.com/support/download.html).
 
 WebPack edition installer archives verified working:
-- [Vivado HLx 2017.1: All OS installer Single-File Download](https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_Vivado_SDK_2017.1_0415_1.tar.gz&akdm=1) (TAR/GZIP - 20.21 GB) MD5 SUM Value: ee351905f061e19751999e69b41f4b22
+- [Vivado HLx 2017.1: All OS installer Single-File Download](https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_Vivado_SDK_2017.1_0415_1.tar.gz&akdm=1)  
+  (TAR/GZIP - 20.21 GB) MD5 SUM Value: ee351905f061e19751999e69b41f4b22
 
 Lab edition installer archives verified working:
-- [Vivado 2017.1: Lab Edition - Linux](https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_Vivado_Lab_Lin_2017.1_0415_1.tar.gz&akdm=1) (TAR/GZIP - 508.01 MB) MD5 SUM Value: 8abe546292f30631325a91699a83df7f
+- [Vivado 2017.1: Lab Edition - Linux](https://www.xilinx.com/member/forms/download/xef.html?filename=Xilinx_Vivado_Lab_Lin_2017.1_0415_1.tar.gz&akdm=1)  
+  (TAR/GZIP - 508.01 MB) MD5 SUM Value: 8abe546292f30631325a91699a83df7f
 
 Role Variables
 --------------
